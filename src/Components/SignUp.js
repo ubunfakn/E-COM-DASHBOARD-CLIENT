@@ -42,7 +42,9 @@ export default function SignUp() {
 
       //If the sign up is successfull then user will be automatically logged in
       //and user credentials will be saved to local storage
-      localStorage.setItem("user", JSON.stringify(result));
+      console.log(result);
+      localStorage.setItem("user", JSON.stringify(result.data));
+      localStorage.setItem("key", JSON.stringify(result.token));
       //after getting result user will be redirected to default user page
       navigate("/user");
     }

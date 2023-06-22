@@ -2,80 +2,77 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function UpdateProduct() {
+  //Declarartions
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState();
+  const [category, setCategory] = useState("");
+  const [brand, setBrand] = useState("");
+  const [error, setError] = useState(true);
+  const Navigate = useNavigate("");
+  const params = useParams();
 
-    //Declarartions
-    const [name, setName] = useState("");
-    const [price, setPrice] = useState();
-    const [category, setCategory] = useState("");
-    const [brand, setBrand] = useState("");
-    const [error, setError] = useState(true);
-    const Navigate = useNavigate("");
-    const params = useParams();
+  //Fetching data from API
+  const getData = async () => {
+    //fetch from database by given id
+    let result = await fetch(`http://localhost:8080/get_product/${params.id}`, {
+      headers: { Authorization: JSON.parse(localStorage.getItem("key")) },
+    }).catch((error) => {
+      console.log(error);
+    });
+    result = await result.json();
 
+    //Setting values fetched from database to their respective variables
+    setName(result.name);
+    setPrice(result.price);
+    setBrand(result.brand);
+    setCategory(result.category);
+  };
 
-    //Fetching data from API
-    const getData = async () => {
-        
-        //fetch from database by given id
-        let result = await fetch(`http://localhost:8080/get_product/${params.id}`).catch((error)=>{
-          console.log(error);
-        })
-        result = await result.json();
+  //rendering
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line
+  }, []);
 
-        //Setting values fetched from database to their respective variables
-        setName(result.name);
-        setPrice(result.price);
-        setBrand(result.brand);
-        setCategory(result.category);
+  //get data from form and dispatching it to the server
+  const getDataFromProductForm = async (e) => {
+    e.preventDefault();
+
+    //Checking for empty input
+    if (!name || !price || !category || !brand) {
+      setError(true);
+      return false;
+    }
+
+    //Setting object keys with their respective updated values
+    setName(name);
+    setPrice(price);
+    setBrand(brand);
+    setCategory(category);
+
+    //Decalaring and setting an object to send
+    const updatedData = {
+      name: name,
+      price: price,
+      category: category,
+      brand: brand,
     };
 
+    //Sending data to server
+    let result = await fetch(`http://localhost:8080/update/${params.id}`, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: JSON.parse(localStorage.getItem("key")),
+      },
+      body: JSON.stringify(updatedData),
+    });
 
-    //rendering
-    useEffect(() => {
-        getData();
-        // eslint-disable-next-line
-    }, []);
-
-    
-    //get data from form and dispatching it to the server
-    const getDataFromProductForm = async (e) => {
-        e.preventDefault();
-
-        //Checking for empty input
-        if (!name || !price || !category || !brand) {
-          setError(true);
-            return false;
-        }
-
-        //Setting object keys with their respective updated values
-        setName(name);
-        setPrice(price);
-        setBrand(brand);
-        setCategory(category);
-
-
-        //Decalaring and setting an object to send
-        const updatedData = {
-            name: name,
-            price: price,
-            category: category,
-            brand: brand,
-        };
-
-        //Sending data to server
-        let result = await fetch(`http://localhost:8080/update/${params.id}`, {
-            method: "PUT",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedData),
-        });
-
-        result = await result.json();
-        console.log(result);
-        Navigate("/user/");
-    };
+    result = await result.json();
+    console.log(result);
+    Navigate("/user/");
+  };
   return (
     <>
       <div

@@ -2,59 +2,57 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function AddProduct() {
+  //Declarations
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState();
+  const [category, setCategory] = useState("");
+  const [brand, setBrand] = useState("");
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const Navigate = useNavigate("");
 
-    //Declarations
-    const [name, setName] = useState("");
-    const [price, setPrice] = useState();
-    const [category, setCategory] = useState("");
-    const [brand, setBrand] = useState("");
-    const [error, setError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
-    const Navigate = useNavigate("");
-    
-    //Getting data from form input and sending it to server
-    const getDataFromProductForm = async (e) => {
+  //Getting data from form input and sending it to server
+  const getDataFromProductForm = async (e) => {
+    e.preventDefault();
 
-        e.preventDefault();
+    //Checking for empty inputs
+    if (!name || !price || !category || !brand) {
+      setError(true);
+      return false;
+    }
 
-        //Checking for empty inputs
-        if (!name || !price || !category || !brand) {
-          setError(true);
-          return false;
-        }
+    //Fetching user from local storage
+    let user = JSON.parse(localStorage.getItem("user"));
 
-        //Fetching user from local storage
-        let user = JSON.parse(localStorage.getItem("user"));
+    //Preparing object for sending it to server
+    const data = {
+      name: name,
+      price: price,
+      category: category,
+      brand: brand,
+      userId: user._id,
+    };
 
+    //Sending product details to server
+    let result = await fetch("http://localhost:8080/add_product", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: JSON.parse(localStorage.getItem("key")),
+      },
+      body: JSON.stringify(data),
+    }).catch((error) => {
+      setError(true);
+      setErrorMessage("Something went wrong! Please try again");
+      console.log(error);
+    });
 
-        //Preparing object for sending it to server
-        const data = {
-          name: name,
-          price: price,
-          category: category,
-          brand: brand,
-          userId: user._id,
-        };
-        
-        //Sending product details to server
-        let result = await fetch("http://localhost:8080/add_product", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }).catch((error)=>{
-          setError(true);
-          setErrorMessage("Something went wrong! Please try again")
-          console.log(error);
-        })
-
-        if(result!==undefined){
-          result = await result.json();
-          console.log(result);
-          Navigate("/user");
-        }
+    if (result !== undefined) {
+      result = await result.json();
+      console.log(result);
+      Navigate("/user");
+    }
   };
   return (
     <>
@@ -63,7 +61,11 @@ export default function AddProduct() {
         style={{ marginTop: "4vw" }}
       >
         <div className="card mb-5" style={{ backgroundColor: "darkblue" }}>
-          {error? <div className="alert alert-danger" role="alert"><h3>{errorMessage}</h3></div>:null}
+          {error ? (
+            <div className="alert alert-danger" role="alert">
+              <h3>{errorMessage}</h3>
+            </div>
+          ) : null}
           <div className="card-title mt-5">
             <h2>Add Product</h2>
           </div>

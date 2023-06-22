@@ -2,7 +2,6 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-
   //Declaration
   const Navigate = useNavigate("");
 
@@ -11,7 +10,7 @@ export default function Navbar() {
 
   const logout = () => {
     localStorage.removeItem("user");
-    Navigate("/signup");
+    Navigate("/");
   };
 
   return (
@@ -20,7 +19,7 @@ export default function Navbar() {
         <NavLink
           className="navbar-brand font-weight-bold text-white"
           style={{ fontSize: "24px" }}
-          to={auth ? "/user" : "/login"}
+          to={auth ? "/user" : "/"}
         >
           E-COM-Dashboard
         </NavLink>
@@ -72,7 +71,7 @@ export default function Navbar() {
                     className="nav-link text-white mr-2"
                     onClick={logout}
                     style={{ fontSize: "18px" }}
-                    to={"/login"}
+                    to={"/"}
                   >
                     logout
                   </NavLink>
@@ -95,7 +94,7 @@ export default function Navbar() {
                   <NavLink
                     className="nav-link text-white mr-2"
                     style={{ fontSize: "18px" }}
-                    to={"/login"}
+                    to={"/"}
                   >
                     login
                   </NavLink>

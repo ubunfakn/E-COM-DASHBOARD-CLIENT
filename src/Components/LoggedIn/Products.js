@@ -15,9 +15,12 @@ export default function Products() {
 
   //Fetch products from database
   const getProducts = async () => {
-    let result = await fetch(
-      `http://localhost:8080/get_products/${data._id}`
-    ).catch((error) => {
+    let result = await fetch(`http://localhost:8080/get_products/${data._id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: JSON.parse(localStorage.getItem("key")),
+      },
+    }).catch((error) => {
       console.log(error);
     });
     if (result !== undefined) {
@@ -30,6 +33,10 @@ export default function Products() {
   const deleteProduct = async (id) => {
     let result = await fetch(`http://localhost:8080/delete/${data._id}/${id}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: JSON.parse(localStorage.getItem("key")),
+      },
     }).catch((error) => {
       console.log(error);
     });
@@ -51,7 +58,13 @@ export default function Products() {
 
     //Sending key to server
     let result = await fetch(
-      `http://localhost:8080/search/${data._id}/${key}`
+      `http://localhost:8080/search/${data._id}/${key}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: JSON.parse(localStorage.getItem("key")),
+        },
+      }
     ).catch((error) => {
       console.log(error);
     });

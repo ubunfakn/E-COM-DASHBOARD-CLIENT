@@ -10,35 +10,42 @@ export default function Profile() {
 
   const fetchUser = async () => {
     let data = localStorage.getItem("user");
-    let result = await window.fetch("http://localhost:8080/getuser", {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: data,
-    }).catch((error)=>{
-      console.log(error);
-    })
+    let result = await window
+      .fetch("http://localhost:8080/getuser", {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: JSON.parse(localStorage.getItem("key")),
+        },
+        method: "POST",
+        body: data,
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
-    console.log(result)
-    if(result!==undefined){
-        if (!result.err && result.status !== 404) {
-          result = await result.json();
-          setProfile(result);
-        } else {
-          alert("Invalid username and password");
-        }
-    
-        data = JSON.parse(data);
+    console.log(result);
+    if (result !== undefined) {
+      if (!result.err && result.status !== 404) {
+        result = await result.json();
+        setProfile(result);
+      } else {
+        alert("Invalid username and password");
+      }
+
+      data = JSON.parse(data);
     }
 
-    let res = await window.fetch(
-      `http://localhost:8080/getproduct/user_id/${data._id}`
-    ).catch((error)=>{
-      console.log(error);
-    })
-    if(res!==undefined){
+    let res = await window
+      .fetch(`http://localhost:8080/getproduct/user_id/${data._id}`, {
+        headers: {
+          Authorization: JSON.parse(localStorage.getItem("key")),
+        },
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    if (res !== undefined) {
       res = await res.json();
       setProductCount(res);
     }

@@ -27,9 +27,9 @@ function App() {
             <Route path="/user/update/:id" element={<UpdateProduct />} />
             <Route path="/user/profile" element={<Profile />} />
           </Route>
-          <Route path="/*" element={<Page4O4 />}/>
+          {/* <Route path="/*" element={<Page4O4 />}/> */}
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
         </Routes>
         <Footer />
       </BrowserRouter>
